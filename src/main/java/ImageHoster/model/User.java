@@ -30,7 +30,7 @@ public class User {
     //FetchType is EAGER
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     //Below annotation indicates that the name of the column in 'users' table referring the primary key in 'user_profile' table will be 'profile_id'
-    @JoinColumn(name = "profile_id")
+
     private UserProfile profile;
 
 
@@ -40,6 +40,9 @@ public class User {
     //FetchType is LAZY
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<Image> images = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private final List<Comment> comments = new ArrayList<>();
 
     public Integer getId() {
         return id;

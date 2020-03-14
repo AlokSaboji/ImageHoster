@@ -42,9 +42,21 @@ public class UserController {
     //This controller method is called when the request pattern is of type 'users/registration' and also the incoming request is of POST type
     //This method calls the business logic and after the user record is persisted in the database, directs to login page
     @RequestMapping(value = "users/registration", method = RequestMethod.POST)
-    public String registerUser(User user) {
-        userService.registerUser(user);
-        return "redirect:/users/login";
+    public String registerUser(User user,Model model) {
+        boolean isGivenPasswordValid = userService.validatePassword(user.getPassword());
+        if(isGivenPasswordValid){
+            userService.registerUser(user);
+            return "redirect:/users/login";
+        }else{
+            User loginUser = new User();
+            UserProfile profile = new UserProfile();
+            user.setProfile(profile);
+            model.addAttribute("User", loginUser);
+            model.addAttribute("passwordTypeError","Password must contain atleast 1 alphabet, 1 number & 1 special character");
+            return "users/registration";
+        }
+
+
     }
 
     //This controller method is called when the request pattern is of type 'users/login'
@@ -62,7 +74,6 @@ public class UserController {
         User existingUser = userService.login(user);
         if (existingUser != null) {
             session.setAttribute("loggeduser", existingUser);
-            session.setAttribute("LoggedInUserId",existingUser.getId());
             return "redirect:/images";
         } else {
             return "users/login";

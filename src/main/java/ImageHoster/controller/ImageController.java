@@ -1,5 +1,6 @@
 package ImageHoster.controller;
 
+import ImageHoster.model.Comment;
 import ImageHoster.model.Image;
 import ImageHoster.model.Tag;
 import ImageHoster.model.User;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.*;
 
 @Controller
@@ -49,8 +51,10 @@ public class ImageController {
     @RequestMapping("/images/{imageID}/{title}")
     public String showImage(@PathVariable("imageID") int id, Model model) {
         Image image = imageService.getImage(id);
+        List<Comment> com = image.getComments();
             model.addAttribute("image", image);
             model.addAttribute("tags", image.getTags());
+            model.addAttribute("comments",image.getComments());
             return "images/image";
     }
 
@@ -106,6 +110,7 @@ public class ImageController {
             model.addAttribute("editError", error);
             model.addAttribute("image", image);
             model.addAttribute("tags", image.getTags());
+            model.addAttribute("comments",image.getComments());
             return "images/image";
         }
     }
@@ -159,9 +164,26 @@ public class ImageController {
             model.addAttribute("deleteError", error);
             model.addAttribute("image", image);
             model.addAttribute("tags", image.getTags());
+            model.addAttribute("comments",image.getComments());
             return "images/image";
     }
 
+    }
+
+    @RequestMapping(value = "/image/{imageID}/{title}/comments")
+    public String addComment(@RequestParam(name = "comments") String text, @PathVariable(name = "imageID") int imageId, Model model, HttpSession session, @PathVariable(name="title") String imageTitle){
+        Comment comment = new Comment();
+        comment.setImage(imageService.getImage(imageId));
+        comment.setCreatedDate(LocalDate.now());
+        User user = (User) session.getAttribute("loggeduser");
+        comment.setUser(user);
+        comment.setText(text);
+        imageService.addComment(comment);
+        Image image = imageService.getImage(imageId);
+        model.addAttribute("image",image);
+        model.addAttribute("tags", image.getTags());
+        model.addAttribute("comments",image.getComments());
+        return "redirect:/images/{imageID}/{title}";
     }
 
 
