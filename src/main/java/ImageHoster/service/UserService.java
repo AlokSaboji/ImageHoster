@@ -15,8 +15,15 @@ public class UserService {
     private UserRepository userRepository;
 
     //Call the registerUser() method in the UserRepository class to persist the user record in the database
-    public void registerUser(User newUser) {
-        userRepository.registerUser(newUser);
+    public boolean registerUser(User newUser) {
+        String password = newUser.getPassword().toString();
+        boolean isGivenPasswordValid = this.validatePassword(password.toString());
+        if(isGivenPasswordValid){
+            userRepository.registerUser(newUser);
+            return true;
+        }else{
+            return false;
+        }
     }
 
     public boolean validatePassword(String password){

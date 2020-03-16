@@ -81,6 +81,7 @@ public class UserControllerTest {
         user.setUsername("Abhi");
         user.setPassword("password1@");
 
+        Mockito.when(userService.registerUser(Mockito.anyObject())).thenReturn(true);
 
         this.mockMvc.perform(post("/users/registration")
                 .flashAttr("user", user)

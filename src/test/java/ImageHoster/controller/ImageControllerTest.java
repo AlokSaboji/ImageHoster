@@ -224,6 +224,14 @@ public class ImageControllerTest {
         image.setTitle("new");
         image.setDescription("This image is for testing purpose");
         image.setUser(user1);
+        Tag tag = new Tag();
+        tag.setId(1);
+        tag.setName("dog");
+
+        List<Tag> tags = new ArrayList<>();
+        tags.add(tag);
+        image.setTags(tags);
+
 
 
         Mockito.when(imageService.getImage(Mockito.anyInt())).thenReturn(image);
